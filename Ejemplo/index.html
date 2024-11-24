@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Usuarios</title>
+</head>
+<body>
+    <h1>Lista de Usuarios</h1>
+    <ul id="lista-usuarios"></ul>
+
+    <h2>Agregar Usuario</h2>
+    <input type="text" id="nombre" placeholder="Nombre">
+    <button onclick="agregarUsuario()">Agregar</button>
+
+    <script>
+        async function cargarUsuarios() {
+            const res = await fetch('/usuarios');
+            const usuarios = await res.json();
+            const lista = document.getElementById('lista-usuarios');
+            lista.innerHTML = '';
+            usuarios.forEach(usuario => {
+                const li = document.createElement('li');
+                li.textContent = usuario.nombre;
+                lista.appendChild(li);
+            });
+        }
+
+        async function agregarUsuario() {
+            const nombre = document.getElementById('nombre').value;
+            if (nombre.trim() === '') return alert('Por favor ingresa un nombre');
+            
+            await fetch('/usuarios', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ nombre })
+            });
+            cargarUsuarios();
+        }
+
+        cargarUsuarios();
+    </script>
+</body>
+</html>
